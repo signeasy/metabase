@@ -910,10 +910,53 @@ export var CardRenderer = {
 
         // apply any stacked series if applicable
         if (isMultiSeries) {
-            for (var i = 2; i < result.cols.length; i++) { 
+            chart.stack(dimension.group().reduceSum(function(d) {
+                return d[2];
+            }), result.cols[2].name);
+            legendCount++;
+
+            // to keep things sane, draw the line at 2 stacked series
+            // putting more than 3 series total on the same chart is a lot
+            if (result.cols.length > 3) {
                 chart.stack(dimension.group().reduceSum(function(d) {
-                    return d[i];
-                }), result.cols[i].name);
+                    return d[3];
+                }), result.cols[3].name);
+                legendCount++;
+            }
+            if (result.cols.length > 4) {
+                chart.stack(dimension.group().reduceSum(function(d) {
+                    return d[4];
+                }), result.cols[4].name);
+                legendCount++;
+            }
+            if (result.cols.length > 5) {
+                chart.stack(dimension.group().reduceSum(function(d) {
+                    return d[5];
+                }), result.cols[5].name);
+                legendCount++;
+            }
+            if (result.cols.length > 6) {
+                chart.stack(dimension.group().reduceSum(function(d) {
+                    return d[6];
+                }), result.cols[6].name);
+                legendCount++;
+            }
+            if (result.cols.length > 7) {
+                chart.stack(dimension.group().reduceSum(function(d) {
+                    return d[7];
+                }), result.cols[7].name);
+                legendCount++;
+            }
+            if (result.cols.length > 8) {
+                chart.stack(dimension.group().reduceSum(function(d) {
+                    return d[8];
+                }), result.cols[8].name);
+                legendCount++;
+            }
+            if (result.cols.length > 9) {
+                chart.stack(dimension.group().reduceSum(function(d) {
+                    return d[9];
+                }), result.cols[9].name);
                 legendCount++;
             }
         }
