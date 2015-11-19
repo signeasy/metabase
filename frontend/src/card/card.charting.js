@@ -910,17 +910,10 @@ export var CardRenderer = {
 
         // apply any stacked series if applicable
         if (isMultiSeries) {
-            chart.stack(dimension.group().reduceSum(function(d) {
-                return d[2];
-            }), result.cols[2].name);
-            legendCount++;
-
-            // to keep things sane, draw the line at 2 stacked series
-            // putting more than 3 series total on the same chart is a lot
-            if (result.cols.length > 3) {
+            for (var i = 2; i < result.cols.length; i++) { 
                 chart.stack(dimension.group().reduceSum(function(d) {
-                    return d[3];
-                }), result.cols[3].name);
+                    return d[i];
+                }), result.cols[i].name);
                 legendCount++;
             }
         }
