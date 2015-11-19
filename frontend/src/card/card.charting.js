@@ -417,6 +417,7 @@ function applyChartTooltips(dcjsChart, id, card, cols) {
                     values += " (" + formatNumber((d.endAngle - d.startAngle) / Math.PI * 50) + '%)'
                 }
                 return '<div><span class="ChartTooltip-name">' + formatValueString(d.data.key, cols[0]) + '</span></div>' +
+                    '<div><span class="ChartTooltip-value">' + d.layer + '</span></div>'+
                     '<div><span class="ChartTooltip-value">' + values + '</span></div>';
             });
 
