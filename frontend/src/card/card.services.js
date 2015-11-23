@@ -329,6 +329,11 @@ CardServices.service('VisualizationSettings', [function() {
             'colors': DEFAULT_COLOR_HARMONY,
             'color': DEFAULT_COLOR
         },
+        'group': {
+            'legend_enabled': true,
+            'colors': DEFAULT_COLOR_HARMONY,
+            'color': DEFAULT_COLOR
+        },
         'map': {
             'latitude_source_table_field_id': null,
             'longitude_source_table_field_id': null,
@@ -344,6 +349,7 @@ CardServices.service('VisualizationSettings', [function() {
         'scalar': ['global'],
         'table': ['global', 'columns'],
         'pie': ['global', 'chart', 'pie'],
+        'group': ['global', 'columns', 'chart', 'xAxis', 'yAxis', 'group'],
         'bar': ['global', 'columns', 'chart', 'xAxis', 'yAxis', 'bar'],
         'line': ['global', 'columns', 'chart', 'xAxis', 'yAxis', 'line'],
         'area': ['global', 'columns', 'chart', 'xAxis', 'yAxis', 'line', 'area'],

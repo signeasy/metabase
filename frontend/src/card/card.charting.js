@@ -122,7 +122,8 @@ function adjustTicksIfNeeded(axis, axisSize, minPixelsPerTick) {
 function getDcjsChartType(cardType) {
     switch (cardType) {
         case "pie": return "pieChart";
-        case "bar": return "barChart";
+        case "bar":
+        case "group": return "barChart";
         case "line":
         case "area":
         case "timeseries": return "lineChart";
@@ -167,6 +168,8 @@ function applyChartLegend(dcjsChart, card) {
         legendEnabled = settings.pie.legend_enabled;
     } else if (card.display === "bar" && settings.bar) {
         legendEnabled = settings.bar.legend_enabled;
+    } else if (card.display === "group" && settings.group) {
+        legendEnabled = settings.group.legend_enabled;
     } else if (card.display === "line" && settings.line) {
         legendEnabled = settings.line.legend_enabled;
     } else if (card.display === "area" && settings.area) {
@@ -183,7 +186,7 @@ function applyChartLegend(dcjsChart, card) {
 }
 
 function addLegendMarginsForCharts(dcjsChart, card, legendCount) {
-    if (card.display === "bar" || card.display === "line" || card.display === "area") {
+    if (card.display === "bar" || card.display === "line" || card.display === "area" || card.display === "group") {
         dcjsChart.margins().top = dcjsChart.margins().top + legendCount*(dcjsChart.legend().itemHeight() + dcjsChart.legend().gap())
     } 
 }
@@ -394,8 +397,8 @@ function applyChartYAxis(chart, card, coldefs, data, minPixelsPerTick) {
 function applyChartColors(dcjsChart, card) {
     // Set the color for the bar/line
     let settings = card.visualization_settings;
-    let chartColor = (card.display === 'bar') ? settings.bar.color : settings.line.lineColor;
-    let colorList = (card.display === 'bar') ? settings.bar.colors : settings.line.colors;
+    let chartColor = (card.display === 'bar') ? settings.bar.color : (card.display === 'group') ? settings.group.color : settings.line.lineColor;
+    let colorList = (card.display === 'bar') ? settings.bar.colors : (card.display === 'group') ? settings.group.colors : settings.line.colors;
     // dedup colors list to ensure stacked charts don't have the same color
     let uniqueColors = _.uniq([chartColor].concat(colorList));
     return dcjsChart.ordinalColors(uniqueColors);
@@ -874,8 +877,11 @@ export var CardRenderer = {
 
         chart.render();
     },
+    group: function(id, card, result) {
+        return CardRenderer.bar(id, card, result, true);
+    },
 
-    bar: function(id, card, result) {
+    bar: function(id, card, result, isGroupChart) {
         var isTimeseries = (dimensionIsTimeseries(result)) ? true : false;
         var isMultiSeries = (result.cols !== undefined &&
                                 result.cols.length > 2) ? true : false;
@@ -906,6 +912,10 @@ export var CardRenderer = {
                             return d.value;
                         });
 
+        if (isGroupChart) {
+            chart.renderType('group');
+            
+        }
         var legendCount = 1;
 
         // apply any stacked series if applicable

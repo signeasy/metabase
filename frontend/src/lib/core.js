@@ -42,6 +42,9 @@ import _ from "underscore";
         'id': 'bar',
         'name': 'Bar Chart'
     }, {
+        'id': 'group',
+        'name': 'Group Chart'
+    }, {
         'id': 'line',
         'name': 'Line Chart'
     }, {

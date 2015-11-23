@@ -12,6 +12,7 @@ const VISUALIZATION_TYPE_NAMES = {
     'table':   { displayName: 'Table',       iconName: 'table' },
     'line':    { displayName: 'Line',        iconName: 'line' },
     'bar':     { displayName: 'Bar',         iconName: 'bar' },
+    'group':     { displayName: 'Group',         iconName: 'bar' },
     'pie':     { displayName: 'Pie',         iconName: 'pie' },
     'area':    { displayName: 'Area',        iconName: 'area' },
     'state':   { displayName: 'State map',   iconName: 'statemap' },
@@ -40,6 +41,7 @@ export default class VisualizationSettings extends React.Component {
             'table',
             'line',
             'bar',
+            'group',
             'pie',
             'area',
             'state',
@@ -80,6 +82,7 @@ export default class VisualizationSettings extends React.Component {
             case "state":
                 return (data && data.cols && data.cols.length > 1 && data.cols[0].base_type === "TextField");
             case "bar":
+            case "group":
             case "pie":
             default:
                 // general check for charts is that they require 2 columns
@@ -133,7 +136,7 @@ export default class VisualizationSettings extends React.Component {
     }
 
     renderChartColorPicker() {
-        if (this.props.card.display === "line" || this.props.card.display === "area" || this.props.card.display === "bar") {
+        if (this.props.card.display === "line" || this.props.card.display === "area" || this.props.card.display === "bar" || this.props.card.display === "group") {
             var colors = this.props.visualizationSettingsApi.getDefaultColorHarmony();
             var colorItems = [];
             for (var i=0; i < colors.length; i++) {
