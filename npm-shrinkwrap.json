@@ -4575,9 +4575,9 @@
       "resolved": "https://registry.npmjs.org/d3-tip/-/d3-tip-0.6.7.tgz"
     },
     "dc": {
-      "version": "2.0.0-beta.19",
-      "from": "https://registry.npmjs.org/dc/-/dc-2.0.0-beta.19.tgz",
-      "resolved": "https://registry.npmjs.org/dc/-/dc-2.0.0-beta.19.tgz"
+      "version": "2.1.0-dev",
+      "from": "signeasy/dc.js#render_barstack_as_g",
+      "resolved": "git://github.com/signeasy/dc.js.git#df43aace3c2b8167edb08d756b49806e50ba97fe"
     },
     "eslint": {
       "version": "1.5.1",
