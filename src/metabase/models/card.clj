@@ -10,6 +10,7 @@
   "Valid values of `Card.display_type`."
   #{:area
     :bar
+    :group
     :country
     :line
     :pie
