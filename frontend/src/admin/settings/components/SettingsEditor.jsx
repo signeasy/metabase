@@ -2,6 +2,8 @@ import React, { Component, PropTypes } from "react";
 
 import SettingsHeader from "./SettingsHeader.jsx";
 import SettingsSetting from "./SettingsSetting.jsx";
+import SettingsEmailForm from "./SettingsEmailForm.jsx";
+import SettingsSlackForm from "./SettingsSlackForm.jsx";
 
 import _ from "underscore";
 import cx from 'classnames';
@@ -14,14 +16,16 @@ export default class SettingsEditor extends Component {
         this.updateSetting = this.updateSetting.bind(this);
 
         this.state = {
-            currentSection: Object.keys(props.sections)[0]
+            currentSection: 0
         };
     }
 
     static propTypes = {
-        initialSection: React.string,
+        initialSection: PropTypes.number,
         sections: PropTypes.object.isRequired,
-        updateSetting: PropTypes.func.isRequired
+        updateSetting: PropTypes.func.isRequired,
+        updateEmailSettings: PropTypes.func.isRequired,
+        sendTestEmail: PropTypes.func.isRequired
     };
 
     componentWillMount() {
@@ -51,30 +55,57 @@ export default class SettingsEditor extends Component {
     }
 
     renderSettingsPane() {
-        var section = this.props.sections[this.state.currentSection];
-        var settings = section.map((setting, index) => {
-            return <SettingsSetting key={setting.key} setting={setting} updateSetting={this.updateSetting} handleChangeEvent={this.handleChangeEvent} autoFocus={index === 0}/>
-        });
-        return (
-            <div className="MetadataTable px2 flex-full">
-                <ul>{settings}</ul>
-            </div>
-        );
+        let section = this.props.sections[this.state.currentSection];
+
+        if (section.name === "Email") {
+            return (
+                <div className="px2">
+                    <SettingsEmailForm
+                        ref="emailForm"
+                        elements={section.settings}
+                        updateEmailSettings={this.props.updateEmailSettings}
+                        sendTestEmail={this.props.sendTestEmail}
+                    />
+                </div>
+            );
+        } else if (section.name === "Slack") {
+            return (
+                <div className="px2">
+                    <SettingsSlackForm
+                        ref="slackForm"
+                        elements={section.settings}
+                        updateSlackSettings={this.props.updateSlackSettings}
+                    />
+                </div>
+            );
+        } else {
+            let settings = section.settings.map((setting, index) => {
+                return <SettingsSetting key={setting.key} setting={setting} updateSetting={this.updateSetting} handleChangeEvent={this.handleChangeEvent} autoFocus={index === 0}/>
+            });
+
+            return (
+                <div className="px2">
+                    <ul>{settings}</ul>
+                </div>
+            );
+        }
     }
 
     renderSettingsSections() {
-        var sections = _.map(this.props.sections, (section, sectionName, sectionIndex) => {
-            var classes = cx("AdminList-item", "flex", "align-center", "no-decoration", {
-                "selected": this.state.currentSection === sectionName
+        const sections = _.map(this.props.sections, (section, idx) => {
+            const classes = cx("AdminList-item", "flex", "align-center", "no-decoration", {
+                "selected": this.state.currentSection === idx
             });
+
             return (
-                <li key={sectionName}>
-                    <a href="#" className={classes} onClick={this.selectSection.bind(null, sectionName)}>
-                        {sectionName}
+                <li key={section.name}>
+                    <a href="#" className={classes} onClick={this.selectSection.bind(null, idx)}>
+                        {section.name}
                     </a>
                 </li>
             );
         });
+
         return (
             <div className="MetadataEditor-table-list AdminList">
                 <ul className="AdminList-items pt1">

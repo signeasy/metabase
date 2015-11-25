@@ -6,10 +6,13 @@
             [expectations :refer :all]
             (metabase [core :as core]
                       [db :as db]
+                      [driver :as driver]
                       [util :as u])
-            (metabase.models [table :refer [Table]])
+            (metabase.models [setting :as setting]
+                             [table :refer [Table]])
             [metabase.test.data :as data]
-            [metabase.test.data.datasets :as datasets]))
+            [metabase.test.data.datasets :as datasets]
+            [metabase.util :as u]))
 
 ;; # ---------------------------------------- EXPECTAIONS FRAMEWORK SETTINGS ------------------------------
 
@@ -61,8 +64,11 @@
                       (< (count e) (count a))             "actual is larger than expected"
                       (> (count e) (count a))             "expected is larger than actual"))))
 
-
 ;; # ------------------------------ FUNCTIONS THAT GET RUN ON TEST SUITE START / STOP ------------------------------
+
+;; this is a little odd, but our normal `test-startup` function won't work for loading the drivers because
+;; they need to be available at evaluation time for some of the unit tests work work properly, so we put this here
+(defonce ^:private loaded-drivers (driver/find-and-load-drivers!))
 
 (defn- load-test-data!
   "Call `load-data!` on all the datasets we're testing against."
@@ -81,13 +87,21 @@
   {:expectations-options :before-run}
   []
   ;; We can shave about a second from unit test launch time by doing the various setup stages in on different threads
-  (let [setup-db (future (time (do (log/info "Setting up test DB and running migrations...")
-                                   (db/setup-db :auto-migrate true)
-                                   (load-test-data!)
-                                   (metabase.models.setting/set :site-name "Metabase Test")
-                                   (core/initialization-complete!))))]
-    (core/start-jetty)
-    @setup-db))
+  ;; Start Jetty in the BG so if test setup fails we have an easier time debugging it -- it's trickier to debug things on a BG thread
+  (let [start-jetty! (future (core/start-jetty))]
+
+    (try
+      (log/info "Setting up test DB and running migrations...")
+      (db/setup-db :auto-migrate true)
+      (load-test-data!)
+      (setting/set :site-name "Metabase Test")
+      (core/initialization-complete!)
+      ;; If test setup fails exit right away
+      (catch Throwable e
+        (log/error (u/format-color 'red "Test setup failed: %s\n%s" e (u/pprint-to-str (.getStackTrace e))))
+        (System/exit -1)))
+
+    @start-jetty!))
 
 
 (defn test-teardown

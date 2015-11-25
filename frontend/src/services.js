@@ -370,6 +370,31 @@ CoreServices.factory('Dashboard', ['$resource', '$cookies', function($resource, 
     });
 }]);
 
+CoreServices.factory('Email', ['$resource', function($resource) {
+    return $resource('/api/email', {}, {
+
+        updateSettings: {
+            url: '/api/email/',
+            method: 'PUT'
+        },
+
+        sendTest: {
+            url: '/api/email/test',
+            method: 'POST'
+        }
+    });
+}]);
+
+CoreServices.factory('Slack', ['$resource', function($resource) {
+    return $resource('/api/slack', {}, {
+
+        updateSettings: {
+            url: '/api/slack/settings',
+            method: 'PUT'
+        }
+    });
+}]);
+
 CoreServices.factory('ForeignKey', ['$resource', '$cookies', function($resource, $cookies) {
     return $resource('/api/foreignkey/:fkID', {}, {
         delete: {
@@ -572,6 +597,44 @@ CoreServices.factory('Metabase', ['$resource', '$cookies', 'MetabaseCore', funct
     });
 }]);
 
+CoreServices.factory('Pulse', ['$resource', '$cookies', function($resource, $cookies) {
+    return $resource('/api/pulse/:pulseId', {}, {
+        list: {
+            url: '/api/pulse',
+            method: 'GET',
+            isArray: true
+        },
+        create: {
+            url: '/api/pulse',
+            method: 'POST',
+            headers: { 'X-CSRFToken': () => $cookies.csrftoken },
+        },
+        get: {
+            method: 'GET',
+            params: { pulseId: '@pulseId' },
+        },
+        update: {
+            method: 'PUT',
+            params: { pulseId: '@id' },
+            headers: { 'X-CSRFToken': () => $cookies.csrftoken },
+        },
+        delete: {
+            method: 'DELETE',
+            params: { pulseId: '@pulseId' },
+            headers: { 'X-CSRFToken': () => $cookies.csrftoken },
+        },
+        form_input: {
+            url: '/api/pulse/form_input',
+            method: 'GET',
+        },
+        preview_card: {
+            url: '/api/pulse/preview_card_info/:id',
+            params: { id: '@id' },
+            method: 'GET',
+        }
+    });
+}]);
+
 CoreServices.factory('Revision', ['$resource', function($resource) {
     return $resource('/api/revision', {}, {
         list: {
@@ -637,6 +700,12 @@ CoreServices.factory('Settings', ['$resource', function($resource) {
             params: {
                 key: '@key'
             }
+        },
+        // set multiple values at once
+        setAll: {
+            url: '/api/setting/',
+            method: 'PUT',
+            isArray: true
         },
         delete: {
             url: '/api/setting/:key',

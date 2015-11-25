@@ -17,7 +17,7 @@
 (defannotation DBEngine
   "Param must be a valid database engine type, e.g. `h2` or `postgres`."
   [symb value :nillable]
-  (checkp-contains? (set (map name (keys @driver/available-drivers))) symb value))
+  (checkp-with driver/is-engine? symb value))
 
 (defn test-database-connection
   "Try out the connection details for a database and useful error message if connection fails, returns `nil` if connection succeeds."
@@ -38,12 +38,13 @@
         (catch Throwable e
           (response-invalid :dbname (.getMessage e)))))))
 
+;; TODO - Just make `:ssl` a `feature`
 (defn supports-ssl?
   "Predicate function which determines if a given `engine` supports the `:ssl` setting."
   [engine]
   {:pre [(driver/is-engine? engine)]}
   (let [driver-props (->> (driver/engine->driver engine)
-                          :details-fields
+                          driver/details-fields
                           (map :name)
                           set)]
     (contains? driver-props "ssl")))
@@ -177,7 +178,8 @@
   [id]
   (let-404 [db (Database id)]
     (write-check db)
-    (future (driver/sync-database! db))) ; run sync-tables asynchronously
+    ;; just publish a message and let someone else deal with the logistics
+    (events/publish-event :database-trigger-sync db))
   {:status :ok})
 
 
