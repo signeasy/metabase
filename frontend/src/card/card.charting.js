@@ -419,9 +419,15 @@ function applyChartTooltips(dcjsChart, id, card, cols) {
                     // TODO: this is not the ideal way to calculate the percentage, but it works for now
                     values += " (" + formatNumber((d.endAngle - d.startAngle) / Math.PI * 50) + '%)'
                 }
-                return '<div><span class="ChartTooltip-name">' + formatValueString(d.data.key, cols[0]) + '</span></div>' +
-                    '<div><span class="ChartTooltip-value">' + d.layer + '</span></div>'+
-                    '<div><span class="ChartTooltip-value">' + values + '</span></div>';
+
+                if (card.display === "bar" || card.display === "line" || card.display === "area") {
+                    return '<div><span class="ChartTooltip-name">' + formatValueString(d.data.key, cols[0]) + '</span></div>' +
+                        '<div><span class="ChartTooltip-value">' + d.layer + '</span></div>'+
+                        '<div><span class="ChartTooltip-value">' + values + '</span></div>';
+                } else {
+                    return '<div><span class="ChartTooltip-name">' + formatValueString(d.data.key, cols[0]) + '</span></div>' +
+                        '<div><span class="ChartTooltip-value">' + values + '</span></div>';
+                }
             });
 
         chart.selectAll('rect.bar,circle.dot,g.pie-slice path,circle.bubble,g.row rect')
