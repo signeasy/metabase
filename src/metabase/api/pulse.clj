@@ -6,6 +6,7 @@
             [metabase.db :as db]
             [metabase.driver :as driver]
             [metabase.email :as email]
+            [metabase.events :as events]
             [metabase.integrations.slack :as slack]
             (metabase.models [card :refer [Card]]
                              [database :refer [Database]]
@@ -58,7 +59,10 @@
 (defendpoint DELETE "/:id"
   "Delete a `Pulse`."
   [id]
-  (db/cascade-delete Pulse :id id))
+  (let [pulse  (db/sel :one Pulse :id id)
+        result (db/cascade-delete Pulse :id id)]
+    (events/publish-event :pulse-delete (assoc pulse :actor_id *current-user-id*))
+    result))
 
 
 (defendpoint GET "/form_input"
@@ -92,7 +96,7 @@
     (let [result (driver/dataset-query (:dataset_query card) {:executed_by *current-user-id*})
           data (:data result)
           card-type (p/detect-pulse-card-type card data)
-          card-html (html (p/render-pulse-card card data p/render-img-data-uri true true))]
+          card-html (html (p/render-pulse-card card data p/render-img-data-uri true false))]
       {:status 200 :body {:id id
                           :pulse_card_type card-type
                           :pulse_card_html card-html
@@ -107,12 +111,13 @@
           ba (p/render-pulse-card-to-png card data true)]
       {:status 200 :headers {"Content-Type" "image/png"} :body (new java.io.ByteArrayInputStream ba) })))
 
-;; Using "GET" for now so it's easier to trigger from the browser. Switch to using POST if we add a button in the UI.
-(defendpoint GET "/:id/test"
-  "Test send a pulse"
-  [id]
-  (check-superuser)
-  (send-pulse (retrieve-pulse id))
+(defendpoint POST "/test"
+  "Test send an unsaved pulse"
+  [:as {{:keys [name cards channels] :as body} :body}]
+  {name     [Required NonEmptyString]
+   cards    [Required ArrayOfMaps]
+   channels [Required ArrayOfMaps]}
+  (send-pulse body)
   {:status 200 :body {:ok true}})
 
 (define-routes)

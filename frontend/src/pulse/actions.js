@@ -3,8 +3,6 @@ import { createAction } from "redux-actions";
 import { AngularResourceProxy, createThunkAction } from "metabase/lib/redux";
 import { normalize, Schema, arrayOf } from "normalizr";
 
-import moment from "moment";
-
 const card = new Schema('card');
 const pulse = new Schema('pulse');
 const user = new Schema('user');
@@ -12,7 +10,7 @@ const user = new Schema('user');
 //   cards: arrayOf(card)
 // });
 
-const Pulse = new AngularResourceProxy("Pulse", ["list", "get", "create", "update", "delete", "form_input", "preview_card"]);
+const Pulse = new AngularResourceProxy("Pulse", ["list", "get", "create", "update", "delete", "test", "form_input", "preview_card"]);
 const Card = new AngularResourceProxy("Card", ["list"]);
 const User = new AngularResourceProxy("User", ["list"]);
 
@@ -22,6 +20,7 @@ export const UPDATE_EDITING_PULSE = 'UPDATE_EDITING_PULSE';
 export const SAVE_PULSE = 'SAVE_PULSE';
 export const SAVE_EDITING_PULSE = 'SAVE_EDITING_PULSE';
 export const DELETE_PULSE = 'DELETE_PULSE';
+export const TEST_PULSE = 'TEST_PULSE';
 
 export const FETCH_CARDS = 'FETCH_CARDS';
 export const FETCH_USERS = 'FETCH_USERS';
@@ -31,10 +30,6 @@ export const FETCH_PULSE_CARD_PREVIEW = 'FETCH_PULSE_CARD_PREVIEW';
 export const fetchPulses = createThunkAction(FETCH_PULSES, function() {
     return async function(dispatch, getState) {
         let pulses = await Pulse.list();
-        for (var p of pulses) {
-            p.updated_at = moment(p.updated_at);
-            p.created_at = moment(p.created_at);
-        }
         return normalize(pulses, arrayOf(pulse));
     };
 });
@@ -80,13 +75,16 @@ export const deletePulse = createThunkAction(DELETE_PULSE, function(id) {
     };
 });
 
+export const testPulse = createThunkAction(TEST_PULSE, function(pulse) {
+    return async function(dispatch, getState) {
+        return await Pulse.test(pulse);
+    };
+});
+
 // NOTE: duplicated from dashboards/actions.js
 export const fetchCards = createThunkAction(FETCH_CARDS, function(filterMode = "all") {
     return async function(dispatch, getState) {
         let cards = await Card.list({ filterMode });
-        for (var c of cards) {
-            c.updated_at = moment(c.updated_at);
-        }
         return normalize(cards, arrayOf(card));
     };
 });
@@ -95,12 +93,6 @@ export const fetchCards = createThunkAction(FETCH_CARDS, function(filterMode = "
 export const fetchUsers = createThunkAction(FETCH_USERS, function() {
     return async function(dispatch, getState) {
         let users = await User.list();
-
-        for (var u of users) {
-            u.date_joined = (u.date_joined) ? moment(u.date_joined) : null;
-            u.last_login = (u.last_login) ? moment(u.last_login) : null;
-        }
-
         return normalize(users, arrayOf(user));
     };
 });

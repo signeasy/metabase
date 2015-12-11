@@ -9,6 +9,7 @@
             [metabase.db :as db]
             [metabase.driver :as driver]
             [metabase.email :as email]
+            [metabase.email.messages :as messages]
             [metabase.integrations.slack :as slack]
             (metabase.models [card :refer [Card]]
                              [hydrate :refer :all]
@@ -78,13 +79,13 @@
   "Send a `Pulse` email given a list of card results to render and a list of recipients to send to."
   [{:keys [id name] :as pulse} results recipients]
   (log/debug (format "Sending Pulse (%d: %s) via Channel :email" id name))
-  (let [email-subject    (str "Pulse Email: " name)
+  (let [email-subject    (str "Pulse: " name)
         email-recipients (filterv u/is-email? (map :email recipients))]
     (email/send-message
       :subject      email-subject
       :recipients   email-recipients
       :message-type :attachments
-      :message      (p/render-pulse-email pulse results))))
+      :message      (messages/render-pulse-email pulse results))))
 
 (defn- create-slack-attachment
   "Create an attachment in Slack for a given Card by rendering its result into an image and uploading it."
@@ -119,8 +120,8 @@
     (doseq [channel-id channels]
       (let [{:keys [channel_type details recipients]} (first (filter #(= channel-id (:id %)) (:channels pulse)))]
         (cond
-          (= :email channel_type) (send-pulse-email pulse results recipients)
-          (= :slack channel_type) (send-pulse-slack pulse results details))))))
+          (= :email (keyword channel_type)) (send-pulse-email pulse results recipients)
+          (= :slack (keyword channel_type)) (send-pulse-slack pulse results details))))))
 
 (defn send-pulses
   "Send any `Pulses` which are scheduled to run in the current day/hour.  We use the current time and determine the
