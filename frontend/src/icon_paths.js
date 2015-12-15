@@ -124,6 +124,10 @@ export var ICON_PATHS = {
         svg: '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path d="M1,6 L4,6 L4,14 L1,14 L1,6 Z M13,7 L16,7 L16,14 L13,14 L13,7 Z" id="Fill-1" fill="#78B5EC"></path><path d="M5,0 L8,0 L8,14 L5,14 L5,0 Z M0,14 L21,14 L21,15 L0,15 L0,14 Z" id="Fill-2" fill="#3875AC"></path><path d="M17,2 L20,2 L20,14 L17,14 L17,2 Z M9,4 L12,4 L12,14 L9,14 L9,4 Z" id="Fill-2-Copy" fill="#4C9DE6"></path></g>',
         attrs: { viewBox: '0 0 21 15' }
     },
+    "illustration-group": {
+        svg: '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path d="M1,6 L4,6 L4,14 L1,14 L1,6 Z M13,7 L16,7 L16,14 L13,14 L13,7 Z" id="Fill-1" fill="#78B5EC"></path><path d="M5,0 L8,0 L8,14 L5,14 L5,0 Z M0,14 L21,14 L21,15 L0,15 L0,14 Z" id="Fill-2" fill="#3875AC"></path><path d="M17,2 L20,2 L20,14 L17,14 L17,2 Z M9,4 L12,4 L12,14 L9,14 L9,4 Z" id="Fill-2-Copy" fill="#4C9DE6"></path></g>',
+        attrs: { viewBox: '0 0 21 15' }
+    },
     "illustration-pie": {
         svg: '<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><path d="M2.69932402,3.77534833 C-1.28778862,8.36199674 -0.801700532,15.3133802 3.78494788,19.3004928 C8.37211538,23.2880567 15.3229797,22.8015174 19.3100924,18.214869 C19.3159584,18.2081208 11.0154209,11 11.0154209,11 L11.0154208,9.53142008e-07 C7.93802299,-0.00127112044 4.87653299,1.27075591 2.69932402,3.77534833 Z" id="background_blue" fill="#4C9DE6"></path><path d="M18.1502111,2.66777135 C16.0851478,0.872639202 13.5372788,0.0010076437 11,0 L11,11.0513182 L20.9460172,6.45578811 C20.3180544,5.04758662 19.3909996,3.74637231 18.1502111,2.66777135 Z" id="dark_blue" fill="#3875AC"></path><path d="M11.0032605,11.0403299 L19.2116508,18.3173971 C22.0081,15.0852077 22.584245,10.1235759 20.949604,6.45979875 L11.0032605,11.0403299 Z" id="Fill-2" fill="#78B5EC"></path></g>',
         attrs: { viewBox: '0 0 23 23' }
